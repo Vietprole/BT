@@ -1,7 +1,41 @@
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
 import java.util.Stack;
 
-public class test {
-        public static double evaluateExpression(String expression) {
+public class Server2 {
+    public static void main(String[] args) throws IOException {
+    ServerSocket server = new ServerSocket(5500);
+		System.out.println("Server is started");
+		Socket socket = server.accept();
+		DataInputStream din = new DataInputStream(socket.getInputStream());
+		DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+		Scanner kb = new Scanner(System.in);
+		while(true) {
+			String in = din.readUTF();
+            try {
+                double result = evaluateExpression(in);
+                dos.writeUTF("Kết quả: " + result);
+                dos.flush();
+            } catch (IllegalArgumentException e) {
+                dos.writeUTF("Lỗi: " + e.getMessage());
+                dos.flush();
+            } catch (ArithmeticException e) {
+                dos.writeUTF("Lỗi: " + e.getMessage());
+                dos.flush();
+            } catch (Exception e) {
+                dos.writeUTF("Lỗi trong biểu thức toán học.");
+                dos.flush();
+            }
+            kb.reset();
+        }
+    }
+
+    public static double evaluateExpression(String expression) {
         Stack<Double> numbers = new Stack<>();
         Stack<Character> operators = new Stack<>();
 
@@ -80,8 +114,5 @@ public class test {
             default:
                 throw new IllegalArgumentException("Toán tử không hợp lệ: " + operator);
         }
-    }
-    public static void main(String[] args) {
-        System.out.println(evaluateExpression("3*5+6"));
     }
 }
