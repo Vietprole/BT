@@ -1,28 +1,32 @@
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import java.awt.EventQueue;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 
-public class Client2 extends JFrame {
+public class Server3 extends JFrame {
     private JPanel contentPane;
     private JTextArea textArea;
     private JTextField textField;
     private JButton button;
-    private Socket clientSocket;
+    private DatagramSocket serverSocket;
+    private InetAddress IPAddress;
+    private byte[] sendData = new byte[1024];
+    private byte[] receiveData = new byte[1024];
+    private String msg="";
+    private int port;
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Client2 frame = new Client2();
+                    Server3 frame = new Server3();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -30,8 +34,8 @@ public class Client2 extends JFrame {
             }
         });
     }
-    public Client2(){
-        setTitle("Math - client");
+    public Server3(){
+        setTitle("Chat - server");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 450);
 
@@ -59,7 +63,7 @@ public class Client2 extends JFrame {
 		textArea.setBounds(10, 11, 621, 343);
 		contentPane.add(textArea);
 
-        button = new JButton();
+        button = new JButton("Send");
         button.setBounds(542, 364, 89, 23);
         button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -70,28 +74,38 @@ public class Client2 extends JFrame {
     }
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonSendActionPerformed'
     try {
-        String str = textField.getText();
-        DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-        out.writeUTF(str);
-        textArea.append("Client: " + str + "\n");
+        msg = textField.getText();
+        sendData = msg.getBytes();
+        //tao datagram co noi dung yeu cau loai du lieu de gui cho client
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+        serverSocket.send(sendPacket);//gui du lieu cho client
+        textArea.append("Server: " + textField.getText() + "\n");
         textField.setText("");
 
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(null, "Không phải số nguyên hợp lệ.");
     } catch (IOException e1) {
         e1.printStackTrace();
     }
     }
     public void formWindowOpened(java.awt.event.WindowEvent evt) throws IOException{
-        clientSocket = new Socket("localhost", 5500);
-        DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+        serverSocket = new DatagramSocket(9876);
+        System.out.println("Server is started");
+        textArea.append("Server is started!" + "\n");
+        receiveData = new byte[1024];
+
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        String str = in.readUTF();
-                        textArea.append("Server: " + str + "\n");
+                        //tao datagram rong de nhan du lieu
+                        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                        //nhan du lieu tu client
+                        serverSocket.receive(receivePacket);
+                        IPAddress = receivePacket.getAddress();
+                        port = receivePacket.getPort();
+                        //lay du lieu tu packet nhan duoc
+                        String str = new String(receivePacket.getData()).trim();
+                        textArea.append("Client: " + str + "\n");
                         System.out.println(str);
                     } catch (IOException i) {
                         System.out.println(i);

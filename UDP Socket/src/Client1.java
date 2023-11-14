@@ -12,17 +12,17 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 
-public class Server3 extends JFrame {
+public class Client1 extends JFrame {
     private JPanel contentPane;
     private JTextArea textArea;
     private JTextField textField;
     private JButton button;
-    private DatagramSocket serverSocket;
+    private DatagramSocket clientSocket;
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Server3 frame = new Server3();
+                    Client1 frame = new Client1();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -30,8 +30,8 @@ public class Server3 extends JFrame {
             }
         });
     }
-    public Server3(){
-        setTitle("Xu ly chuoi");
+    public Client1(){
+        setTitle("Xu ly chuoi - client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 800, 450);
 
@@ -72,10 +72,10 @@ public class Server3 extends JFrame {
     try {
         InetAddress IPAddress = InetAddress.getByName("localhost");
         byte[] sendData = new byte[1024];
-        sendData = textArea.getText().getBytes();
+        sendData = textField.getText().getBytes();
         //tao datagram co noi dung yeu cau loai du lieu de gui cho server
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
-        serverSocket.send(sendPacket);//gui du lieu cho server
+        clientSocket.send(sendPacket);//gui du lieu cho server
 
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(null, "Không phải số nguyên hợp lệ.");
@@ -84,10 +84,8 @@ public class Server3 extends JFrame {
     }
     }
     public void formWindowOpened(java.awt.event.WindowEvent evt) throws IOException{
-        serverSocket = new DatagramSocket();
-        System.out.println("Server is started");
+        clientSocket = new DatagramSocket();
         byte[] receiveData = new byte[1024];
-        byte[] sendData = new byte[1024];
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -97,9 +95,10 @@ public class Server3 extends JFrame {
                         //tao datagram rong de nhan du lieu
                         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length );
                         //nhan du lieu tu server
-                        serverSocket.receive(receivePacket);
+                        clientSocket.receive(receivePacket);
                         //lay du lieu tu packet nhan duoc
                         String str = new String(receivePacket.getData());
+                        textArea.append(str);
                         System.out.println(str);
                     } catch (IOException i) {
                         System.out.println(i);

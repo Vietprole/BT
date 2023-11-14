@@ -6,23 +6,23 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import java.awt.EventQueue;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.Socket;
 
 
-public class Client1 extends JFrame {
+public class Client4 extends JFrame {
     private JPanel contentPane;
     private JTextArea textArea;
     private JTextField textField;
     private JButton button;
-    private DatagramSocket clientSocket;
+    private Socket clientSocket;
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Client1 frame = new Client1();
+                    Client4 frame = new Client4();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -30,10 +30,10 @@ public class Client1 extends JFrame {
             }
         });
     }
-    public Client1(){
-        setTitle("Xu ly chuoi");
+    public Client4(){
+        setTitle("SQL - client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 800, 450);
+        setBounds(100, 100, 700, 450);
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -70,12 +70,11 @@ public class Client1 extends JFrame {
     }
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonSendActionPerformed'
     try {
-        InetAddress IPAddress = InetAddress.getByName("localhost");
-        byte[] sendData = new byte[1024];
-        sendData = textField.getText().getBytes();
-        //tao datagram co noi dung yeu cau loai du lieu de gui cho server
-        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
-        clientSocket.send(sendPacket);//gui du lieu cho server
+        String str = textField.getText();
+        DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+        out.writeUTF(str);
+        textArea.append("Client: " + str + "\n");
+        textField.setText("");
 
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(null, "Không phải số nguyên hợp lệ.");
@@ -84,21 +83,15 @@ public class Client1 extends JFrame {
     }
     }
     public void formWindowOpened(java.awt.event.WindowEvent evt) throws IOException{
-        clientSocket = new DatagramSocket();
-        byte[] receiveData = new byte[1024];
-
+        clientSocket = new Socket("localhost", 5500);
+        DataInputStream in = new DataInputStream(clientSocket.getInputStream());
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        //tao datagram rong de nhan du lieu
-                        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length );
-                        //nhan du lieu tu server
-                        clientSocket.receive(receivePacket);
-                        //lay du lieu tu packet nhan duoc
-                        String str = new String(receivePacket.getData());
-                        textArea.append(str);
+                        String str = in.readUTF();
+                        textArea.append("Server: " + str + "\n");
                         System.out.println(str);
                     } catch (IOException i) {
                         System.out.println(i);
