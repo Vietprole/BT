@@ -1,4 +1,3 @@
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,6 +16,7 @@ public class Server2 {
 		Scanner kb = new Scanner(System.in);
 		while(true) {
 			String in = din.readUTF();
+            in = in.replaceAll("\\s", "");
             try {
                 double result = evaluateExpression(in);
                 dos.writeUTF("Kết quả: " + result);
@@ -35,84 +35,94 @@ public class Server2 {
         }
     }
 
-    public static double evaluateExpression(String expression) {
-        Stack<Double> numbers = new Stack<>();
-        Stack<Character> operators = new Stack<>();
+    public static Double evaluateExpression(String s) {
+        Double res = 0.0;
+        String[] s_postfix = convert(s);
 
-        for (int i = 0; i < expression.length(); i++) {
-            char c = expression.charAt(i);
+        res = evaluate(s_postfix);
 
-            if (c == ' ') {
-                continue;
-            }
+        return res;
+    }
 
-            if (Character.isDigit(c)) {
-                StringBuilder sb = new StringBuilder();
-                while (i < expression.length() && (Character.isDigit(expression.charAt(i)) || expression.charAt(i) == '.')) {
-                    sb.append(expression.charAt(i));
+    public static Double evaluate(String[] tokens) {
+
+        Stack<Double> stack = new Stack<>();
+
+        for (String token : tokens) {
+            if (!token.isEmpty())
+                if (token.equals("+")) {
+                    Double a = stack.pop();
+                    Double b = stack.pop();
+                    stack.push(a + b);
+                } else if (token.equals("-")) {
+                    Double b = stack.pop();
+                    Double a = stack.pop();
+                    stack.push(a - b);
+                } else if (token.equals("*")) {
+                    Double a = stack.pop();
+                    Double b = stack.pop();
+                    stack.push(a * b);
+                } else if (token.equals("/")) {
+                    Double b = stack.pop();
+                    Double a = stack.pop();
+                    stack.push(a / b);
+                } else if (token.equals("(")) {
+                    // Do nothing
+                } else if (token.equals(")")) {
+                    // Do nothing
+                } else {
+                    stack.push(Double.parseDouble(token.toString()));
+                }
+        }
+
+        return stack.pop();
+    }
+
+    private static String[] convert(String infix) {
+        Stack<Character> stack = new Stack<>();
+        String postfix = "";
+
+        for (int i = 0; i < infix.length(); i++) {
+            char c = infix.charAt(i);
+
+            if (Character.isLetterOrDigit(c)) {
+                String temp = "";
+                temp += c;
+                while ((i + 1) < infix.length() && Character.isLetterOrDigit(infix.charAt(i + 1))) {
+                    temp += infix.charAt(i + 1);
                     i++;
                 }
-                i--;
-                numbers.push(Double.parseDouble(sb.toString()));
+
+                postfix = postfix + " " + temp;
             } else if (c == '(') {
-                operators.push(c);
+                stack.push(c);
             } else if (c == ')') {
-                while (operators.peek() != '(') {
-                    double b = numbers.pop();
-                    double a = numbers.pop();
-                    char op = operators.pop();
-                    numbers.push(performOperation(a, b, op));
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    postfix = postfix + " " + stack.pop();
                 }
-                operators.pop();
-            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-                while (!operators.isEmpty() && hasPrecedence(c, operators.peek())) {
-                    double b = numbers.pop();
-                    double a = numbers.pop();
-                    char op = operators.pop();
-                    numbers.push(performOperation(a, b, op));
-                }
-                operators.push(c);
+                stack.pop();
             } else {
-                throw new IllegalArgumentException("Biểu thức không hợp lệ: " + c);
+                while (!stack.isEmpty() && precedence(c) <= precedence(stack.peek())) {
+                    postfix = postfix + " " + stack.pop();
+                }
+                stack.push(c);
             }
         }
 
-        while (!operators.isEmpty()) {
-            double b = numbers.pop();
-            double a = numbers.pop();
-            char op = operators.pop();
-            numbers.push(performOperation(a, b, op));
+        while (!stack.isEmpty()) {
+            postfix = postfix + " " + stack.pop();
         }
 
-        if (numbers.size() != 1 || !operators.isEmpty()) {
-            throw new IllegalArgumentException("Biểu thức không hợp lệ");
-        }
-
-        return numbers.pop();
+        return postfix.split(" ");
     }
 
-    public static boolean hasPrecedence(char op1, char op2) {
-        if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) {
-            return true;
-        }
-        return false;
-    }
-
-    public static double performOperation(double a, double b, char operator) {
-        switch (operator) {
-            case '+':
-                return a + b;
-            case '-':
-                return a - b;
-            case '*':
-                return a * b;
-            case '/':
-                if (b == 0) {
-                    throw new ArithmeticException("Lỗi chia cho 0.");
-                }
-                return a / b;
-            default:
-                throw new IllegalArgumentException("Toán tử không hợp lệ: " + operator);
+    private static int precedence(char c) {
+        if (c == '+' || c == '-') {
+            return 1;
+        } else if (c == '*' || c == '/') {
+            return 2;
+        } else {
+            return 0;
         }
     }
 }

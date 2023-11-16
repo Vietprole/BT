@@ -1,9 +1,7 @@
 import java.sql.*;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import java.awt.EventQueue;
 import java.io.DataInputStream;
@@ -15,8 +13,6 @@ import java.net.Socket;
 public class Server4 extends JFrame {
     private JPanel contentPane;
     private JTextArea textArea;
-    private JTextField textField;
-    private JButton button;
     private ServerSocket server;
     private Socket serverSocket;
 
@@ -53,35 +49,10 @@ public class Server4 extends JFrame {
         contentPane.setLayout(null);
         setContentPane(contentPane);
 
-        textField = new JTextField();
-        textField.setBounds(10, 365, 516, 20);
-        contentPane.add(textField);
-        textField.setColumns(10);
-
         textArea = new JTextArea();
         textArea.setBounds(10, 11, 621, 343);
         contentPane.add(textArea);
 
-        button = new JButton();
-        button.setBounds(542, 364, 89, 23);
-        button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSendActionPerformed(evt);
-            }
-        });
-        contentPane.add(button);
-    }
-
-    private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonSendActionPerformed'
-        // try {
-        // String str = textField.getText();
-        // DataOutputStream out = new DataOutputStream(serverSocket.getOutputStream());
-        // out.writeUTF(str);
-        // textArea.append("Server: " + str + "\n");
-        // textField.setText("");
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
     }
 
     public void formWindowOpened(java.awt.event.WindowEvent evt)
@@ -140,16 +111,16 @@ public class Server4 extends JFrame {
                         // Iterate over the ResultSetMetaData object and print the name and value of
                         // each column for each row in the ResultSet object
                         for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
-                            System.out.print(resultSetMetaData.getColumnName(i) + ": ");
-                            out.writeUTF(resultSetMetaData.getColumnName(i) + ": ");
+                            System.out.print(resultSetMetaData.getColumnName(i) + " | ");
+                            out.writeUTF(resultSetMetaData.getColumnName(i) + " | ");
                         }
                         System.out.println();
                         out.writeUTF("\n");
 
                         while (resultSet.next()) {
                             for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
-                                System.out.print(resultSet.getString(i) + ": ");
-                                out.writeUTF(resultSet.getString(i) + ": ");
+                                System.out.print(resultSet.getString(i) + " | ");
+                                out.writeUTF(resultSet.getString(i) + " | ");
                             }
                             System.out.println();
                             out.writeUTF("\n");

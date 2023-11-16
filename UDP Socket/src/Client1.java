@@ -97,7 +97,7 @@ public class Client1 extends JFrame {
                         //nhan du lieu tu server
                         clientSocket.receive(receivePacket);
                         //lay du lieu tu packet nhan duoc
-                        String str = new String(receivePacket.getData());
+                        String str = new String(receivePacket.getData(),0,receivePacket.getLength());
                         textArea.append(str);
                         System.out.println(str);
                     } catch (IOException i) {

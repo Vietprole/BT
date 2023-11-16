@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 
 public class Client3 extends JFrame {
@@ -17,7 +19,10 @@ public class Client3 extends JFrame {
     private JTextField textField;
     private JButton button;
     private DatagramSocket clientSocket;
-    private DatagramPacket receivePacket;
+    private String msg = "";
+    private InetAddress IPAddress;
+    private byte[] sendData = new byte[1024];
+    private byte[] receiveData = new byte[1024];
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -70,13 +75,15 @@ public class Client3 extends JFrame {
     }
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonSendActionPerformed'
     try {
-        InetAddress IPAddress = InetAddress.getByName("localhost");
-        byte[] sendData = new byte[1024];
-        sendData = textField.getText().getBytes();
+        String message = textField.getText();
+        msg = message;
+        sendData = new byte[1024];
+        sendData = msg.getBytes();
         //tao datagram co noi dung yeu cau loai du lieu de gui cho client
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
         clientSocket.send(sendPacket);//gui du lieu cho server
-        textArea.append("Client: " + textField.getText() + "\n");
+        textArea.append("Client: " + message + "\n");
+        System.out.println("Client: " + message + "\n");
         textField.setText("");
 
     } catch (IOException e1) {
@@ -84,29 +91,43 @@ public class Client3 extends JFrame {
     }
     }
     public void formWindowOpened(java.awt.event.WindowEvent evt) throws IOException{
-        clientSocket = new DatagramSocket();
-        System.out.println("client is started");
-        textArea.append("Client is started!" + "\n");
-        //Gui text dau tien de lay dia chi
-        byte[] receiveData = new byte[1024];
-        InetAddress IPAddress = InetAddress.getByName("localhost");
-        byte[] sendData1 = new byte[1024];
-        sendData1 = "".getBytes();
-        //tao datagram co noi dung yeu cau loai du lieu de gui cho client
-        DatagramPacket sendPacket = new DatagramPacket(sendData1, sendData1.length, IPAddress, 9876);
-        clientSocket.send(sendPacket);//gui du lieu cho server
+
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    clientSocket = new DatagramSocket();
+
+                    System.out.println("client is started");
+                    textArea.append("Client is started!" + "\n");
+                    //Gui text dau tien de lay dia chi
+                    receiveData = new byte[1024];
+                    IPAddress = InetAddress.getByName("localhost");
+                    byte[] sendData1 = new byte[1024];
+                    sendData1 = "".getBytes();
+                    //tao datagram co noi dung yeu cau loai du lieu de gui cho client
+                    DatagramPacket sendPacket = new DatagramPacket(sendData1, sendData1.length, IPAddress, 9876);
+                    clientSocket.send(sendPacket);//gui du lieu cho server
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+
+                    e.printStackTrace();
+                }
+                
+                sendData = new byte[1024];
                 while (true) {
                     try {
                         //tao datagram rong de nhan du lieu
-                        receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                         //nhan du lieu tu server
                         clientSocket.receive(receivePacket);
                         //lay du lieu tu packet nhan duoc
-                        String str = new String(receivePacket.getData()).trim();
+                        String str = new String(receivePacket.getData(),0,receivePacket.getLength());
+                        str = str.trim();
                         textArea.append("Server: " + str + "\n");
                         System.out.println(str);
                     } catch (IOException i) {

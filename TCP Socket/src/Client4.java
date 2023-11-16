@@ -2,6 +2,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -56,10 +57,12 @@ public class Client4 extends JFrame {
 		textField.setColumns(10);
 		
 		textArea = new JTextArea();
+        JScrollPane scrollpane = new JScrollPane(textArea);
 		textArea.setBounds(10, 11, 621, 343);
-		contentPane.add(textArea);
+		scrollpane.setBounds(10, 11, 621, 343);
+		contentPane.add(scrollpane);
 
-        button = new JButton();
+        button = new JButton("Send");
         button.setBounds(542, 364, 89, 23);
         button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -91,7 +94,7 @@ public class Client4 extends JFrame {
                 while (true) {
                     try {
                         String str = in.readUTF();
-                        textArea.append("Server: " + str + "\n");
+                        textArea.append("Server: " + str);
                         System.out.println(str);
                     } catch (IOException i) {
                         System.out.println(i);

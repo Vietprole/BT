@@ -59,7 +59,7 @@ public class Client1 extends JFrame {
 		textArea.setBounds(10, 11, 621, 343);
 		contentPane.add(textArea);
 
-        button = new JButton();
+        button = new JButton("Send");
         button.setBounds(542, 364, 89, 23);
         button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

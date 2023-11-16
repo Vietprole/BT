@@ -1,24 +1,22 @@
 import java.sql.*;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import java.awt.EventQueue;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
 
 public class Server4 extends JFrame {
     private JPanel contentPane;
     private JTextArea textArea;
-    private JTextField textField;
-    private JButton button;
-    private ServerSocket server;
-    private Socket serverSocket;
+    private DatagramSocket serverSocket;
+    private InetAddress IPAddress;
+    private byte[] sendData = new byte[1024];
+    private byte[] receiveData = new byte[1024];
+    private int port;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -53,40 +51,20 @@ public class Server4 extends JFrame {
         contentPane.setLayout(null);
         setContentPane(contentPane);
 
-        textField = new JTextField();
-        textField.setBounds(10, 365, 516, 20);
-        contentPane.add(textField);
-        textField.setColumns(10);
-
         textArea = new JTextArea();
         textArea.setBounds(10, 11, 621, 343);
         contentPane.add(textArea);
 
-        button = new JButton();
-        button.setBounds(542, 364, 89, 23);
-        button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSendActionPerformed(evt);
-            }
-        });
-        contentPane.add(button);
-    }
-
-    private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonSendActionPerformed'
-        // try {
-        // String str = textField.getText();
-        // DataOutputStream out = new DataOutputStream(serverSocket.getOutputStream());
-        // out.writeUTF(str);
-        // textArea.append("Server: " + str + "\n");
-        // textField.setText("");
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
     }
 
     public void formWindowOpened(java.awt.event.WindowEvent evt)
             throws IOException, ClassNotFoundException, SQLException {
-        server = new ServerSocket(5500);
+        
+        serverSocket = new DatagramSocket(9876);
+        System.out.println("Server is started");
+        textArea.append("Server is started!" + "\n");
+        receiveData = new byte[1024];
+
         textArea.append("Server: Server started" + "\n");
         textArea.append("Server: Waiting for client..." + "\n");
         System.out.println("Server started");
@@ -94,9 +72,11 @@ public class Server4 extends JFrame {
 
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         System.out.print("SQL Driver OK!");
+        textArea.append("SQL Driver OK!" + "\n");
         String URL = "jdbc:sqlserver://localhost:1433;IntegratedSecurity=true;databaseName=QLSV;user=VT-PGH\\OS;encrypt=false";
         Connection connection = DriverManager.getConnection(URL);
         System.out.print("Connection OK");
+        textArea.append("Connection OK!" + "\n");
         // // Start a loop to accept incoming client connections
         // while (true) {
         // // Accept an incoming client connection
@@ -120,15 +100,19 @@ public class Server4 extends JFrame {
         // clientHandlerThread.start();
         // }
 
-        serverSocket = server.accept();
-        DataInputStream in = new DataInputStream(serverSocket.getInputStream());
-        DataOutputStream out = new DataOutputStream(serverSocket.getOutputStream());
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        String str = in.readUTF();
+                        //tao datagram rong de nhan du lieu
+                        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                        //nhan du lieu tu client
+                        serverSocket.receive(receivePacket);
+                        IPAddress = receivePacket.getAddress();
+                        port = receivePacket.getPort();
+                        //lay du lieu tu packet nhan duoc
+                        String str = new String(receivePacket.getData()).trim();
                         textArea.append("Client: " + str + "\n");
                         System.out.println(str);
 
@@ -136,24 +120,27 @@ public class Server4 extends JFrame {
                         ResultSet resultSet = statement.executeQuery(str);
                         // Get the ResultSetMetaData object from the ResultSet object
                         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-
+                        String Result = "";
                         // Iterate over the ResultSetMetaData object and print the name and value of
                         // each column for each row in the ResultSet object
                         for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
                             System.out.print(resultSetMetaData.getColumnName(i) + ": ");
-                            out.writeUTF(resultSetMetaData.getColumnName(i) + ": ");
+                            Result += resultSetMetaData.getColumnName(i) + ": ";
                         }
                         System.out.println();
-                        out.writeUTF("\n");
+                        Result += "\n";
 
                         while (resultSet.next()) {
                             for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
                                 System.out.print(resultSet.getString(i) + ": ");
-                                out.writeUTF(resultSet.getString(i) + ": ");
+                                Result += resultSet.getString(i) + ": ";
                             }
                             System.out.println();
-                            out.writeUTF("\n");
+                            Result += "\n";
                         }
+                        sendData = Result.getBytes();
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                        serverSocket.send(sendPacket);
                     } catch (IOException i) {
                         System.out.println(i);
                     } catch (SQLException e) {
