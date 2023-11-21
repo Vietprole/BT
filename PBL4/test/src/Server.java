@@ -47,7 +47,8 @@ public class Server
 			 		int end = Integer.parseInt(line.substring(2,3));
 					String output = Dijkstra.mydijkstra(start, end, line2);
 					for (int i = 1; i <= nodes; i++){
-						output += "\n" + (Dijkstra.mydijkstra(start, i, line2)).substring(2);
+						String[] out = Dijkstra.mydijkstra(start, i, line2).split("\n", 2);
+						output += "\n" + out[1];
 					}
 					out.writeUTF(output);
 			 		System.out.println(output);

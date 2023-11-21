@@ -12,9 +12,9 @@ public class Dijkstra {
 
     public static String mydijkstra(int s, int e, String line) throws IOException {
         int n, m;
-        //Scanner inp = new Scanner(new File("D:/tai xuong/input.txt"));
+        Scanner inp = new Scanner(new File("D:/tai xuong/input.txt"));
         //line = "6 7"+"\n"+"1 2 8"+"\n"+"1 6 2"+"\n"+"2 3 3"+"\n"+"2 5 3"+"\n"+"3 4 2"+"\n"+"4 5 1"+"\n"+"5 6 3";
-        Scanner inp = new Scanner(line);
+        //Scanner inp = new Scanner(line);
         n = inp.nextInt();
         m = inp.nextInt();
         for (int i = 1; i <= n; i++) {
@@ -85,7 +85,15 @@ public class Dijkstra {
 
     public static void main(String[] args) throws IOException {
         String line = "6 7"+"\n"+"1 2 8"+"\n"+"1 6 2"+"\n"+"2 3 3"+"\n"+"2 5 3"+"\n"+"3 4 2"+"\n"+"4 5 1"+"\n"+"5 6 3";
-        String pathResult = mydijkstra(1, 4, line);
-        System.out.println(pathResult);
+        String pathResult = mydijkstra(2, 4, line);
+        int start = 2;
+        int end = 4;
+        int nodes = 7;
+        String output = mydijkstra(start, end, line);
+        for (int i = 1; i <= nodes; i++){
+            String[] out = Dijkstra.mydijkstra(start, i, line).split("\n", 2);
+            output += "\n" + out[1];
+        }
+        System.out.println(output);
     }
 }

@@ -192,6 +192,7 @@ public class Index extends JFrame {
                             // if (pathResult.length() > 0){
                             //     textArea.setText(pathResult);
                             // }
+                            textArea.setText("");
                             String[] pathLines = pathResult.split("\n");
 
                             if (pathLines.length > 0) {
@@ -201,10 +202,10 @@ public class Index extends JFrame {
                                 textField_3.setText(pathLines[1]); // Gán dòng 2 cho textField_3
                             }
                             for (int i = 2; i < pathLines.length; i++){
-                                String lastChar = pathLines[i].substring(pathLines[i].length() - 2);
+                                String lastChar = pathLines[i].trim().substring(pathLines[i].length() - 2);
                                 textArea.append(lastChar + ": " + pathLines[i].trim().replace(" ", " -> ") + "\n");
                             }
-                            panel_2.addLineDijkstra(Color.yellow, 5.0f, pathLines[1]);
+                            panel_2.addLineDijkstra(Color.yellow, 5.0f, pathResult);
                         } catch (IOException i) {
                             System.out.println(i);
                         }

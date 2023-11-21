@@ -79,7 +79,6 @@ public class PointDrawingFromFile extends JPanel {
                 int x2 = (int) point2.getX();
                 int y2 = (int) point2.getY();            
                 addLines(x1, y1, x2, y2,color,thickness);
-                
             }
         }
         
