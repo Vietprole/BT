@@ -12,17 +12,18 @@ import java.io.IOException;
 import java.net.Socket;
 
 
-public class Client1 extends JFrame {
+public class Cau2Client extends JFrame {
     private JPanel contentPane;
     private JTextArea textArea;
     private JTextField textField;
     private JButton button;
     private Socket clientSocket;
+    private String Number;
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Client1 frame = new Client1();
+                    Cau2Client frame = new Cau2Client();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -30,8 +31,8 @@ public class Client1 extends JFrame {
             }
         });
     }
-    public Client1(){
-        setTitle("Xu ly chuoi - client");
+    public Cau2Client(){
+        setTitle("Nhi phan doi xung - client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 450);
 
@@ -70,10 +71,10 @@ public class Client1 extends JFrame {
     }
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonSendActionPerformed'
     try {
-        String str = textField.getText();
+        Number = textField.getText();
         DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-        out.writeUTF(str);
-        textArea.append("Client: " + str + "\n");
+        out.writeUTF(Number);
+        textArea.append("Client: " + Number + "\n");
         textField.setText("");
 
     } catch (NumberFormatException ex) {
@@ -91,8 +92,13 @@ public class Client1 extends JFrame {
                 while (true) {
                     try {
                         String str = in.readUTF();
-                        textArea.append(str + "\n");
-                        System.out.println(str + "\n");
+                        textArea.append("Server: " + str + "\n");
+                        System.out.println("Server: " + str + "\n");
+                        if(str.equals(Number + " La mot so doi xung" + "\n" + "Server yeu cau Client ngung gui")) {
+                            textArea.append("Ngat ket noi den server" + "\n");
+                            
+                            clientSocket.close();
+                        }
                     } catch (IOException i) {
                         System.out.println(i);
                     }
@@ -102,3 +108,4 @@ public class Client1 extends JFrame {
         t.start(); 
     }
 }
+

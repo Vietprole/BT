@@ -119,7 +119,6 @@ public class Index extends JFrame {
 
         textArea = new JTextArea();
         textArea.setBounds(27, 270, 206, 109);
-        textArea.setText("placeholder");
         contentPane.add(textArea);
 
         JLabel lblNewLabel_2 = new JLabel("Bảng chỉ đường");
@@ -190,9 +189,9 @@ public class Index extends JFrame {
 
                             String pathResult = client.in.readUTF();
                             System.out.println(pathResult);
-                            if (pathResult.length() > 0){
-                                textArea.setText(pathResult);
-                            }
+                            // if (pathResult.length() > 0){
+                            //     textArea.setText(pathResult);
+                            // }
                             String[] pathLines = pathResult.split("\n");
 
                             if (pathLines.length > 0) {
@@ -201,7 +200,11 @@ public class Index extends JFrame {
                             if (pathLines.length > 1) {
                                 textField_3.setText(pathLines[1]); // Gán dòng 2 cho textField_3
                             }
-                            panel_2.addLineDijkstra(Color.yellow, 5.0f, pathResult);
+                            for (int i = 2; i < pathLines.length; i++){
+                                String lastChar = pathLines[i].substring(pathLines[i].length() - 2);
+                                textArea.append(lastChar + ": " + pathLines[i].trim().replace(" ", " -> ") + "\n");
+                            }
+                            panel_2.addLineDijkstra(Color.yellow, 5.0f, pathLines[1]);
                         } catch (IOException i) {
                             System.out.println(i);
                         }
