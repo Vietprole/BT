@@ -177,7 +177,7 @@ public class Index extends JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowOpened
         try {
-            //client = new Client("172.21.20.90", 5500);
+            // client = new Client("172.21.20.90", 5500);
             client = new Client("localhost", 5500);
             Thread t = new Thread(new Runnable() {
                 @Override
@@ -190,7 +190,7 @@ public class Index extends JFrame {
                             String pathResult = client.in.readUTF();
                             System.out.println(pathResult);
                             // if (pathResult.length() > 0){
-                            //     textArea.setText(pathResult);
+                            // textArea.setText(pathResult);
                             // }
                             textArea.setText("");
                             String[] pathLines = pathResult.split("\n");
@@ -201,7 +201,7 @@ public class Index extends JFrame {
                             if (pathLines.length > 1) {
                                 textField_3.setText(pathLines[1]); // Gán dòng 2 cho textField_3
                             }
-                            for (int i = 2; i < pathLines.length; i++){
+                            for (int i = 2; i < pathLines.length; i++) {
                                 String lastChar = pathLines[i].trim().substring(pathLines[i].length() - 2);
                                 textArea.append(lastChar + ": " + pathLines[i].trim().replace(" ", " -> ") + "\n");
                             }
