@@ -6,7 +6,7 @@ import java.net.*;
 public class Client {
 	// initialize socket and input output streams
 	private Socket socket = null;
-	//protected DataInputStream input = null;// from terminal
+	// protected DataInputStream input = null;// from terminal
 	protected DataInputStream in = null;// from server
 	protected DataOutputStream out = null;
 
@@ -18,7 +18,8 @@ public class Client {
 			System.out.println("Connected");
 
 			// takes input from terminal
-			//input = new DataInputStream(System.in);//new ByteArrayInputStream("1 4".getBytes()));
+			// input = new DataInputStream(System.in);//new ByteArrayInputStream("1
+			// 4".getBytes()));
 
 			// takes input from Server
 			in = new DataInputStream(socket.getInputStream());
@@ -39,7 +40,7 @@ public class Client {
 		String line2 = "";
 
 		try {
-			DataInputStream fileinput = new DataInputStream(new FileInputStream(new File("D:/tai xuong/input.txt")));
+			DataInputStream fileinput = new DataInputStream(new FileInputStream(new File("PBL4/test/src/input.txt")));
 			while ((line = fileinput.readLine()) != null) {
 				line2 += line + "\n";
 			}
@@ -52,17 +53,17 @@ public class Client {
 
 		// keep reading until "Over" is input
 		// while (true) {// !line.equals("Over")){
-		// 	try {
-		// 		line = input.readLine();
-		// 		out.writeUTF(line);
+		// try {
+		// line = input.readLine();
+		// out.writeUTF(line);
 
-		// 		System.out.println(in.readUTF());
-		// 	} catch (IOException i) {
-		// 		System.out.println(i);
-		// 	}
+		// System.out.println(in.readUTF());
+		// } catch (IOException i) {
+		// System.out.println(i);
+		// }
 		// }
 	}
-	
+
 	// close the connection
 	// try {
 	// input.close();
