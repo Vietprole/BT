@@ -45,9 +45,9 @@ public class Server
 			 		line = in.readUTF();
 			 		int start = Integer.parseInt(line.substring(0,1));
 			 		int end = Integer.parseInt(line.substring(2,3));
-					String output = Dijkstra.mydijkstra(start, end, line2);
+					String output = Dijkstra.myDijkstra(start, end, line2);
 					for (int i = 1; i <= nodes; i++){
-						String[] out = Dijkstra.mydijkstra(start, i, line2).split("\n", 2);
+						String[] out = Dijkstra.myDijkstra(start, i, line2).split("\n", 2);
 						output += "\n" + out[1];
 					}
 					out.writeUTF(output);

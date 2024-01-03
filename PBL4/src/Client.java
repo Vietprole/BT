@@ -40,7 +40,7 @@ public class Client {
 		String line2 = "";
 
 		try {
-			DataInputStream fileinput = new DataInputStream(new FileInputStream(new File("PBL4/test/src/input.txt")));
+			DataInputStream fileinput = new DataInputStream(new FileInputStream(new File("E:/Viet/Lap trinh mang/BT/PBL4/src/input.txt")));
 			while ((line = fileinput.readLine()) != null) {
 				line2 += line + "\n";
 			}

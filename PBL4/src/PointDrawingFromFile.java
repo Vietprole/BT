@@ -39,7 +39,7 @@ public class PointDrawingFromFile extends JPanel {
         lines = new ArrayList<>();
         lineColors = new ArrayList<>();
         lineThicknesses = new ArrayList<>();
-        FileInput = docNoiDungTuTep("D:/tai xuong/input.txt");
+        FileInput = docNoiDungTuTep("E:/Viet/Lap trinh mang/BT/PBL4/src/input.txt");
         // String FileInput = "6 7"+"\n"+"1 2 8"+"\n"+"1 6 2"+"\n"+"2 3 3"+"\n"+"2 5
         // 3"+"\n"+"3 4 2"+"\n"+"4 5 1"+"\n"+"5 6 3";
         // Scanner inp = new Scanner(line);
