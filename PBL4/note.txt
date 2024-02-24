@@ -1,0 +1,10 @@
+Đưa client server lên trước
+Bỏ dấu ":"
+
+Bìa: tên Trường, lớp
+Nội dung cần trình bày:
+Tổng quan
+Cách triển khai
+Kết quả đạt được
+
+

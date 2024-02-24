@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -120,10 +119,7 @@ public class Index extends JFrame {
 
         textArea = new JTextArea();
         textArea.setBounds(27, 270, 206, 109);
-
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(27, 270, 206, 109);
-        contentPane.add(scrollPane);
+        contentPane.add(textArea);
 
         JLabel lblNewLabel_2 = new JLabel("Bảng chỉ đường");
         lblNewLabel_2.setBounds(70, 238, 139, 24);
@@ -181,8 +177,8 @@ public class Index extends JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowOpened
         try {
-             client = new Client("172.20.10.3", 5500);
-            //client = new Client("localhost", 5500);
+            // client = new Client("172.21.20.90", 5500);
+            client = new Client("localhost", 5500);
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {

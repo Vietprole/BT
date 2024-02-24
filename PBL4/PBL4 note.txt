@@ -1,0 +1,6 @@
+folder trong CD:
+doc
+slide
+code
+
+CD có nhãn
